@@ -3,26 +3,28 @@ integrations:
   - name: nri-flex
     interval: 30s
     config:
-      name: mysqlDbFlex
+      name: postgresDbFlex
       secrets:
         mylogin:
           kind: local # Use Flex local/internal decryption function
           key: N3wR3lic! # Your pass_phrase to encrypt/decrypt the login info
-          data: 21998a635470bdeb497da3c35397869d99cc188259c016b5afddfff1f7eff22a2a1666ddffc885d48c1267a02db84a1789654363192cbc7460f25943d8922d
+          data: PASTE_ENCRYPTED_CREDENTIALS_HERE
           type: equal
           # Run the following command to generate a encrypted login info, paste it to the above -> data
-          # nri-flex -encrypt_pass 'username=<YOUR USERNAME>,password=<YOUR PASSWORD>' -pass_phrase 'N3wR3lic!'
-
+          # ./nri-flex -encrypt_pass 'username=flexuser,password=flexpass' -pass_phrase 'N3wR3lic!'
 
       apis:
-        - database: mysql
+        - database: postgres
           event_type: Lab7Example2
-          db_conn: ${secret.mylogin:username}:${secret.mylogin:password}@tcp(ec2-54-206-88-205.ap-southeast-2.compute.amazonaws.com:3306)/usersdb
+          db_conn: "host=postgres port=5432 user=${secret.mylogin:username} password=${secret.mylogin:password} dbname=flexworkshop sslmode=disable"
           custom_attributes: # applies to all queries
             weather: sunny
             LOCATION: sydney
 
           db_queries:
-            - name: userSample
-              event_type: userSample
-              run: Select * from users;
+            - name: userMetricSample
+              event_type: userMetricSample
+              run: "SELECT * FROM user_metrics;"
+            - name: userJoinSample
+              event_type: userJoinSample
+              run: "SELECT u.username, u.email, u.is_active, m.login_count, m.session_duration_minutes FROM users u LEFT JOIN user_metrics m ON u.id = m.user_id;"

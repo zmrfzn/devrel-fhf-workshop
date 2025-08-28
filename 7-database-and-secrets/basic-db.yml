@@ -3,19 +3,18 @@ integrations:
   - name: nri-flex
     interval: 30s
     config:
-      name: mysqlDbFlex
+      name: pgsqlDbFlex
       apis:
-        - database: mysql
+        - database: postgres
           event_type: Lab7Example1
-          db_conn: weaver:weaverpass@tcp(ec2-54-206-88-205.ap-southeast-2.compute.amazonaws.com:3306)/usersdb
+          db_conn: "host=postgres port=5432 user=flexuser password=flexpass dbname=flexworkshop sslmode=disable"
           custom_attributes: # applies to all queries
             weather: sunny
             LOCATION: sydney
-          # db_queries:
-           # - name: userSample
-           #   event_type: userSample
-           #   run: Select * from users
-
-#             - name: MySQLShowVars
-#               event_type: msqlvarSample  
-#               run: SHOW VARIABLES like 'max%'
+        #  db_queries:
+        #    - name: userSample
+        #      event_type: userSample
+        #      run: Select * from users
+        #    - name: PGShowVars
+        #      event_type: pgsqlvarSample  
+        #      run: SELECT * FROM pg_settings WHERE name LIKE 'max%' LIMIT 2;
