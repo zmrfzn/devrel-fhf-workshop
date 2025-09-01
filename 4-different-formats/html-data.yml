@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sample HTML Table</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      margin: 24px;
+      color: #1f2937;
+      background: #ffffff;
+    }
+    h1 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+    .table-wrap {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      max-width: 960px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead th {
+      background: #f9fafb;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 10px 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    tbody td {
+      font-size: 14px;
+      padding: 10px 12px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    tbody tr:nth-child(even) td { background: #fcfcfd; }
+    .status {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 12px;
+      border-radius: 999px;
+      color: #111827;
+      background: #e5e7eb;
+    }
+    .ok { background: #dcfce7; color: #065f46; }
+    .warn { background: #fff7ed; color: #9a3412; }
+    .fail { background: #fee2e2; color: #991b1b; }
+    .muted { color: #6b7280; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Service Summary</h1>
+  <p class="muted">Tip: Flex can filter rows where <strong>Index</strong> starts with 1 using <code>sample_include_match_all_filter</code> and <code>Index: "^1"</code>.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Index</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Value</th>
+          <th>UpdatedAt</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0</td>
+          <td>alpha</td>
+          <td><span class="status ok">OK</span></td>
+          <td>42</td>
+          <td>2025-09-01T09:00:00Z</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>beta</td>
+          <td><span class="status warn">WARN</span></td>
+          <td>7</td>
+          <td>2025-09-01T09:05:00Z</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>gamma</td>
+          <td><span class="status ok">OK</span></td>
+          <td>13</td>
+          <td>2025-09-01T09:10:00Z</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>delta</td>
+          <td><span class="status fail">FAIL</span></td>
+          <td>0</td>
+          <td>2025-09-01T09:12:00Z</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>epsilon</td>
+          <td><span class="status warn">WARN</span></td>
+          <td>5</td>
+          <td>2025-09-01T09:15:00Z</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
