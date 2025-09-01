@@ -7,7 +7,7 @@ integrations:
       apis:
         - name: simpleXML
           event_type: Lab4Example1
-          url: https://nr-testdata1.s3.ap-southeast-2.amazonaws.com/xml-sample1.xml
+          url: https://raw.githack.com/zmrfzn/devrel-fhf-workshop/refs/heads/main/4-different-formats/xml-data.xml
 
           # prefix: books-
           

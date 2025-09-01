@@ -7,7 +7,7 @@ integrations:
       apis:
         - name: htmltable
           event_type: Lab4Example2
-          url: https://nr-testdata1.s3.ap-southeast-2.amazonaws.com/html-table-sample1.html
+          url: https://raw.githack.com/zmrfzn/devrel-fhf-workshop/refs/heads/main/4-different-formats/html-data.html
           
           ## parse_html: true
 
