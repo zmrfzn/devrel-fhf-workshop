@@ -11,7 +11,7 @@ echo ""
 # Load saved environment variables if they exist
 if [[ -f "$HOME/.newrelic-flex-env" ]]; then
     source "$HOME/.newrelic-flex-env"
-    echo -e "\033[32m✓ Loaded saved credentials from $HOME/.newrelic-flex-env \033[0m"
+    echo -e "\033[32m✓\033[0m Loaded saved credentials from $HOME/.newrelic-flex-env"
 fi
 
 # Function to validate input
@@ -56,7 +56,8 @@ fi
 
 if [[ -n "$NEW_RELIC_LICENSE_KEY" ]]; then
     echo "✓ Using NEW_RELIC_LICENSE_KEY from environment"
-    LICENSE_KEY="$NEW_RELIC_LICENSE_KEY"
+    # Sanitize the license key (remove any newlines or whitespace)
+    LICENSE_KEY=$(echo "$NEW_RELIC_LICENSE_KEY" | tr -d '\n\r\t ' | sed 's/[^a-zA-Z0-9]//g')
     LICENSE_KEY_FROM_ENV=true
 else
     # Prompt for New Relic License Key (hide input for security)
@@ -64,6 +65,8 @@ else
         echo -n "Enter your New Relic Ingest License Key: "
         read -rs LICENSE_KEY
         echo ""  # Add newline after hidden input
+        # Sanitize the license key (remove any newlines or whitespace)
+        LICENSE_KEY=$(echo "$LICENSE_KEY" | tr -d '\n\r\t ' | sed 's/[^a-zA-Z0-9]//g')
         if validate_input "$LICENSE_KEY"; then
             break
         fi
@@ -77,39 +80,45 @@ if [[ "$ACCOUNT_ID_FROM_ENV" == false ]] || [[ "$LICENSE_KEY_FROM_ENV" == false 
     store_env_vars
 fi
 
-# Prompt for config file path (with default)
-echo ""
-echo "Available Flex configurations:"
-echo "  1. 2-getting-started/http-json-example-multi.yml (Multi-JSON API)"
-echo "  2. 3-status-endpoints/status-twilio.yml (Twilio example)"
-echo "  3. 4-different-formats/csv-basic.yml (CSV example)" 
-echo "  4. 7-database-and-secrets/basic-db.yml (Database example)"
-echo "  5. Custom path"
-echo ""
-echo -n "Select configuration (1-5) or enter custom path [default: 7-database-and-secrets/basic-db.yml]: "
-read -r CONFIG_CHOICE
+# Check if config path was provided as command line argument
+if [[ -n "$1" ]]; then
+    CONFIG_PATH="$1"
+    echo "Using config file from command line: $CONFIG_PATH"
+else
+    # Prompt for config file path (with default)
+    echo ""
+    echo "Available Flex configurations:"
+    echo "  1. 2-getting-started/http-json-example-multi.yml (Multi-JSON API)"
+    echo "  2. 3-status-endpoints/status-twilio.yml (Twilio example)"
+    echo "  3. 4-different-formats/csv-basic.yml (CSV example)" 
+    echo "  4. 7-database-and-secrets/basic-db.yml (Database example)"
+    echo "  5. Custom path"
+    echo ""
+    echo -n "Select configuration (1-5) or enter custom path [default: 7-database-and-secrets/basic-db.yml]: "
+    read -r CONFIG_CHOICE
 
-case $CONFIG_CHOICE in
-    1)
-        CONFIG_PATH="2-getting-started/http-json-example-multi.yml"
-        ;;
-    2)
-        CONFIG_PATH="3-status-endpoints/status-twilio.yml"
-        ;;
-    3)
-        CONFIG_PATH="4-different-formats/csv-basic.yml"
-        ;;
-    4|"")
-        CONFIG_PATH="7-database-and-secrets/basic-db.yml"
-        ;;
-    5)
-        echo -n "Enter custom config path: "
-        read -r CONFIG_PATH
-        ;;
-    *)
-        CONFIG_PATH="$CONFIG_CHOICE"
-        ;;
-esac
+    case $CONFIG_CHOICE in
+        1)
+            CONFIG_PATH="2-getting-started/http-json-example-multi.yml"
+            ;;
+        2)
+            CONFIG_PATH="3-status-endpoints/status-twilio.yml"
+            ;;
+        3)
+            CONFIG_PATH="4-different-formats/csv-basic.yml"
+            ;;
+        4|"")
+            CONFIG_PATH="7-database-and-secrets/basic-db.yml"
+            ;;
+        5)
+            echo -n "Enter custom config path: "
+            read -r CONFIG_PATH
+            ;;
+        *)
+            CONFIG_PATH="$CONFIG_CHOICE"
+            ;;
+    esac
+fi
 
 # Validate config file exists
 if [[ ! -f "$CONFIG_PATH" ]]; then
@@ -137,11 +146,13 @@ echo "Config: $CONFIG_PATH"
 echo ""
 echo -e "\033[44m\033[97m Command: ./nri-flex -config_path $CONFIG_PATH -insights_url $INSIGHTS_URL -insights_api_key $REDACTED_KEY --pretty --verbose \033[0m"
 echo ""
+echo "Debug: License key length: ${#LICENSE_KEY}"
+echo "Debug: License key hex dump (first 20 chars): $(echo -n "${LICENSE_KEY:0:20}" | hexdump -C)"
 
 # Execute the Flex command (without --pretty --verbose to reduce noise)
 ./nri-flex -config_path "$CONFIG_PATH" \
     -insights_url "$INSIGHTS_URL" \
-    -insights_api_key "$LICENSE_KEY" --pretty
+    -insights_api_key "${LICENSE_KEY}" --pretty
 
 # Check exit status
 if [[ $? -eq 0 ]]; then
